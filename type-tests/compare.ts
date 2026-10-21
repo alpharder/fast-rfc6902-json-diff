@@ -9,7 +9,7 @@ import {
   type JsonObject,
   type JsonValue,
   type RFC6902,
-} from "fast-rfc6902-json-diff";
+} from "@alpharder/fast-rfc6902-json-diff";
 
 interface Document {
   readonly id: string;

@@ -6,7 +6,7 @@
     "noEmit": true,
     "baseUrl": ".",
     "paths": {
-      "fast-rfc6902-json-diff": ["./src/index.ts"]
+      "@alpharder/fast-rfc6902-json-diff": ["./src/index.ts"]
     }
   }
 }

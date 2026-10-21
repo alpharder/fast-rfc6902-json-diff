@@ -41,7 +41,7 @@ try {
       "package.json",
     ].sort()
   );
-  assert.equal(packed.name, "fast-rfc6902-json-diff");
+  assert.equal(packed.name, "@alpharder/fast-rfc6902-json-diff");
   writeFileSync(
     path.join(temp, "package.json"),
     JSON.stringify({ private: true, type: "module" })

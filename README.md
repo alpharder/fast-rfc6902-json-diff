@@ -3,7 +3,7 @@
 **The fastest RFC 6902 JSON diff generator.** Turn two JSON snapshots into standard [RFC 6902 JSON Patch](https://datatracker.ietf.org/doc/html/rfc6902), with compact array edits, optional move detection and zero runtime dependencies.
 
 ```typescript
-import { compare } from "fast-rfc6902-json-diff";
+import { compare } from "@alpharder/fast-rfc6902-json-diff";
 
 const before = { items: ["a", "b", "c", "d"] };
 const after = { items: ["d", "a", "b", "c"] };
@@ -40,7 +40,7 @@ Capabilities below describe **patch generation** in the tested versions.
 
 | Library | JSON Patch output | Array moves | Array strategy | Runtime dependencies |
 |---|---|---|---|:---:|
-| **fast-rfc6902-json-diff 1.0.0** | **Yes** | **Optional** | **Myers / LCS, deep equality** | **0** |
+| **[fast-rfc6902-json-diff 1.0.0](https://www.npmjs.com/package/@alpharder/fast-rfc6902-json-diff)** | **Yes** | **Optional** | **Myers / LCS, deep equality** | **0** |
 | [fast-json-patch 3.1.1](https://github.com/Starcounter-Jack/JSON-Patch) | Yes | No | Positional | 0 |
 | [rfc6902 5.3.0](https://github.com/chbrown/rfc6902) | Yes | No | Levenshtein edit distance | 0 |
 | [jsondiffpatch 0.7.6](https://github.com/benjamine/jsondiffpatch) | Via formatter | Yes, including JSON Patch output | LCS; configurable object matching | 1 direct |
@@ -106,13 +106,13 @@ Move detection is enabled for this library and `jsondiffpatch` in rows marked â€
 **Bun**
 
 ```bash
-bun add fast-rfc6902-json-diff
+bun add @alpharder/fast-rfc6902-json-diff
 ```
 
 **npm**
 
 ```bash
-npm install fast-rfc6902-json-diff
+npm install @alpharder/fast-rfc6902-json-diff
 ```
 
 ## Usage
@@ -120,7 +120,7 @@ npm install fast-rfc6902-json-diff
 ### Compare documents
 
 ```typescript
-import { compare } from "fast-rfc6902-json-diff";
+import { compare } from "@alpharder/fast-rfc6902-json-diff";
 
 const patch = compare({ count: 1 }, { count: 2 });
 // [{ op: "replace", path: "/count", value: 2 }]
@@ -131,7 +131,7 @@ const patch = compare({ count: 1 }, { count: 2 });
 Use a separate patch applier, such as [fast-json-patch](https://github.com/Starcounter-Jack/JSON-Patch):
 
 ```typescript
-import { compare } from "fast-rfc6902-json-diff";
+import { compare } from "@alpharder/fast-rfc6902-json-diff";
 import { applyPatch } from "fast-json-patch";
 
 const before = { count: 1 };
@@ -164,7 +164,7 @@ TypeScript checks nested fields and accepts ordinary interfaces and readonly arr
 ES2020 builds are provided for ESM and CommonJS, with TypeScript declarations. Use them in Node.js, Bun or browser bundles.
 
 ```typescript
-import { compare, type CompareOptions, type RFC6902 } from "fast-rfc6902-json-diff";
+import { compare, type CompareOptions, type RFC6902 } from "@alpharder/fast-rfc6902-json-diff";
 
 const options: CompareOptions = { detectMoveOperations: true };
 const patch: RFC6902.Operation[] = compare({ items: [1, 2] }, { items: [2, 1] }, options);
