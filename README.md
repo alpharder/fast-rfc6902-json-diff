@@ -40,7 +40,7 @@ Capabilities below describe **patch generation** in the tested versions.
 
 | Library | JSON Patch output | Array moves | Array strategy | Runtime dependencies |
 |---|---|---|---|:---:|
-| **[fast-rfc6902-json-diff 1.0.0](https://www.npmjs.com/package/@alpharder/fast-rfc6902-json-diff)** | **Yes** | **Optional** | **Myers / LCS, deep equality** | **0** |
+| **[fast-rfc6902-json-diff 1.0.1](https://www.npmjs.com/package/@alpharder/fast-rfc6902-json-diff)** | **Yes** | **Optional** | **Myers / LCS, deep equality** | **0** |
 | [fast-json-patch 3.1.1](https://github.com/Starcounter-Jack/JSON-Patch) | Yes | No | Positional | 0 |
 | [rfc6902 5.3.0](https://github.com/chbrown/rfc6902) | Yes | No | Levenshtein edit distance | 0 |
 | [jsondiffpatch 0.7.6](https://github.com/benjamine/jsondiffpatch) | Via formatter | Yes, including JSON Patch output | LCS; configurable object matching | 1 direct |
@@ -61,28 +61,28 @@ Operations per second; higher is better.
 
 | Case | **fast-rfc6902-json-diff** | fast-json-patch | rfc6902 | jsondiffpatch | just-diff | generate-json-patch |
 |---|---:|---:|---:|---:|---:|---:|
-| Large document, few changes (978 kB) | **1,833** | 861 | 190 | 85 | 152 | 128 |
-| Structured document, array changes (60 → 57 kB) | **585,135** | 11,368 | 721 | 6,583 | 22,304 | 7,085 |
-| Array replacement (128 items) | **410,005** | 170,500 | 73 | 10,868 | 24,647 | 7,848 |
-| Identical small documents (separate objects) | **4,433,554** | 4,386,353 | 1,555,030 | 1,370,795 | 770,617 | 1,982,400 |
-| Array append (128 to 144 items) | **629,598** | 172,665 | 157 | 131,094 | 35,771 | 6,455 |
-| Array rotation (64 objects) | **215,948** | 141,767 | 554 | 15,942 | 17,884 | 21,604 |
-| Array rotation, moves enabled | **189,835** | 144,437 | 510 | 15,368 | 17,347 | 18,493 |
-| Nested array rotation, moves enabled | **184,431** | 136,715 | 404 | 14,683 | 13,920 | 18,469 |
+| Large document, few changes (978 kB) | **1,781** | 771 | 170 | 81 | 140 | 137 |
+| Structured document, array changes (60 → 57 kB) | **564,909** | 11,081 | 648 | 6,056 | 20,272 | 6,759 |
+| Array replacement (128 items) | **409,057** | 162,918 | 68 | 10,302 | 22,074 | 7,436 |
+| Identical small documents (separate objects) | **4,393,938** | 4,278,967 | 1,508,546 | 1,365,356 | 728,983 | 1,994,734 |
+| Array append (128 to 144 items) | **599,003** | 166,418 | 149 | 121,008 | 34,456 | 5,901 |
+| Array rotation (64 objects) | **188,811** | 136,670 | 520 | 15,600 | 18,024 | 21,611 |
+| Array rotation, moves enabled | **200,395** | 140,770 | 490 | 15,566 | 17,413 | 19,105 |
+| Nested array rotation, moves enabled | **189,494** | 139,782 | 400 | 14,944 | 13,593 | 18,727 |
 
 <details>
 <summary>Node.js 24.22.0 benchmarks</summary>
 
 | Case | **fast-rfc6902-json-diff** | fast-json-patch | rfc6902 | jsondiffpatch | just-diff | generate-json-patch |
 |---|---:|---:|---:|---:|---:|---:|
-| Large document, few changes (978 kB) | **650** | 527 | 58 | 44 | 62 | 102 |
-| Structured document, array changes (60 → 57 kB) | **405,268** | 5,017 | 290 | 3,973 | 13,231 | 4,158 |
-| Array replacement (128 items) | **524,727** | 203,339 | 32 | 9,530 | 21,707 | 8,348 |
-| Identical small documents (separate objects) | **5,959,872** | 4,606,017 | 585,954 | 835,301 | 611,789 | 1,031,984 |
-| Array append (128 to 144 items) | **1,411,947** | 270,244 | 77 | 109,831 | 36,271 | 6,735 |
-| Array rotation (64 objects) | **126,693** | 116,505 | 230 | 9,334 | 12,223 | 14,871 |
-| Array rotation, moves enabled | **126,808** | 119,327 | 218 | 9,367 | 12,183 | 13,127 |
-| Nested array rotation, moves enabled | **122,632** | 117,643 | 178 | 9,441 | 10,116 | 13,502 |
+| Large document, few changes (978 kB) | **668** | 565 | 61 | 46 | 62 | 106 |
+| Structured document, array changes (60 → 57 kB) | **389,780** | 5,000 | 303 | 3,939 | 13,291 | 4,233 |
+| Array replacement (128 items) | **527,954** | 202,230 | 32 | 9,431 | 21,409 | 8,110 |
+| Identical small documents (separate objects) | **5,824,808** | 4,545,738 | 574,443 | 811,286 | 602,349 | 1,039,098 |
+| Array append (128 to 144 items) | **1,420,141** | 267,997 | 78 | 106,000 | 34,830 | 6,767 |
+| Array rotation (64 objects) | **123,856** | 115,558 | 228 | 9,399 | 12,375 | 14,308 |
+| Array rotation, moves enabled | **122,232** | 116,212 | 230 | 9,330 | 12,218 | 13,275 |
+| Nested array rotation, moves enabled | **117,497** | 115,213 | 198 | 9,269 | 9,952 | 13,013 |
 
 </details>
 

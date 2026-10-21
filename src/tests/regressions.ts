@@ -127,25 +127,82 @@ test("custom array comparators retain their equality semantics", (t) => {
   t.deepEqual(operations, []);
 });
 
-test("primitive array edits round-trip with and without equality caching", (t) => {
+for (const [title, left, right] of [
+  [
+    "replacement values are not mistaken for removed values",
+    ["1", "x", 0, 1, 2, 2, true],
+    [1, 0, null, null, "1", 0, true, true, false, false, false],
+  ],
+  [
+    "moves account for preceding removals in the same batch",
+    ["1", "0", 0, 0, true, false, "0"],
+    ["x", false, true, true, 1, "x", "x"],
+  ],
+  [
+    "moves preserve the coordinates of intervening edits",
+    ["x", "1", "x", true, true, 1, "0"],
+    [true, "1", "0", true, 1, 2, 2, false, false, false, true],
+  ],
+] as const) {
+  test(title, (t) => {
+    for (const doCaching of [false, true]) {
+      const patch = compare(left, right, {
+        detectMoveOperations: true,
+        doCaching,
+      });
+      t.deepEqual(applyPatch([...left], patch, true).newDocument, right);
+    }
+  });
+}
+
+test("array edits round-trip with move detection and equality caching", (t) => {
   let seed = 0x6902;
   const next = () => {
     seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0;
     return seed;
   };
   const pool = [null, false, true, 0, 1, 2, "0", "1", "x"];
-  for (let i = 0; i < 200; i++) {
+  for (let i = 0; i < 2000; i++) {
     const left = Array.from(
-      { length: next() % 12 },
-      () => pool[next() % pool.length]
+      { length: (next() >>> 16) % 24 },
+      () => pool[(next() >>> 16) % pool.length]
     );
     const right = Array.from(
-      { length: next() % 12 },
-      () => pool[next() % pool.length]
+      { length: (next() >>> 16) % 24 },
+      () => pool[(next() >>> 16) % pool.length]
     );
-    const patch = compare(left, right);
-    t.deepEqual(patch, compare(left, right, { doCaching: true }));
-    t.deepEqual(applyPatch([...left], patch, true).newDocument, right);
+    // Object wrappers also exercise deep matching with distinct references.
+    const source = i % 2 ? left.map((value) => ({ value })) : left;
+    const target = i % 2 ? right.map((value) => ({ value })) : right;
+    for (const detectMoveOperations of [false, true]) {
+      const patch = compare(source, target, { detectMoveOperations });
+      t.deepEqual(
+        patch,
+        compare(source, target, { detectMoveOperations, doCaching: true })
+      );
+      t.deepEqual(
+        applyPatch(structuredClone(source), patch, true).newDocument,
+        target
+      );
+    }
+  }
+});
+
+test("move detection round-trips every short array with repeated values", (t) => {
+  const arrays: JsonValue[][] = [[]];
+  let previous: JsonValue[][] = [[]];
+  for (let length = 1; length <= 4; length++) {
+    const current = previous.flatMap((prefix) =>
+      [null, 0, 1].map((value) => [...prefix, value])
+    );
+    arrays.push(...current);
+    previous = current;
+  }
+  for (const left of arrays) {
+    for (const right of arrays) {
+      const patch = compare(left, right, { detectMoveOperations: true });
+      t.deepEqual(applyPatch([...left], patch, true).newDocument, right);
+    }
   }
 });
 

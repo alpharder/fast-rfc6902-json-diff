@@ -1,6 +1,6 @@
 {
   "name": "@alpharder/fast-rfc6902-json-diff",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "The fastest RFC 6902 JSON diff generator. Compact array diffs, optional move detection and zero runtime dependencies. Built for Node.js and Bun.",
   "repository": {
     "type": "git",

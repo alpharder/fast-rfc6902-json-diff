@@ -73,7 +73,9 @@ export function diffArraysUsingLcs(
         operationCandidates.push({
           type: "remove",
           shiftedIdx: deletePos,
-          sourceArrayRemovalBatchStartIdx,
+          // Replaced elements precede the pure removals in this batch.
+          sourceArrayRemovalBatchStartIdx:
+            sourceArrayRemovalBatchStartIdx + insertLen,
           sourceArrayRemovalBatchPosition: batchRemovalsCount,
         });
         batchRemovalsCount++;
@@ -208,70 +210,44 @@ function detectMoveOperations(
   compareFunc: CompareFunc,
   leftArr: ComparableArray
 ) {
-  for (let i = candidates.length - 1; i >= 0; i--) {
-    const candidateI = candidates[i];
-
-    if (candidateI.type !== "add" && candidateI.type !== "remove") {
+  // Adjacent add/remove pairs can be merged without changing any other edit's
+  // coordinates. Crossing another edit would require rebasing its indices.
+  for (let i = candidates.length - 1; i > 0; i--) {
+    const first = candidates[i - 1];
+    const second = candidates[i];
+    if (
+      !(
+        (first.type === "add" && second.type === "remove") ||
+        (first.type === "remove" && second.type === "add")
+      )
+    ) {
       continue;
     }
 
-    const candidateIValue =
-      candidateI.type === "add"
-        ? candidateI.value
-        : leftArr[
-            candidateI.sourceArrayRemovalBatchStartIdx +
-              candidateI.sourceArrayRemovalBatchPosition
-          ];
+    const addition = (
+      first.type === "add" ? first : second
+    ) as AddOperationCandidate;
+    const removal = (
+      first.type === "remove" ? first : second
+    ) as RemoveOperationCandidate;
+    const removedValue =
+      leftArr[
+        removal.sourceArrayRemovalBatchStartIdx +
+          removal.sourceArrayRemovalBatchPosition
+      ];
+    if (!compareFunc(addition.value, removedValue)) continue;
 
-    for (let j = i - 1; j >= 0; j--) {
-      const candidateJ = candidates[j];
-
-      if (candidateJ.type === candidateI.type) {
-        continue;
-      }
-      if (candidateJ.type !== "add" && candidateJ.type !== "remove") {
-        continue;
-      }
-
-      const candidateJValue =
-        candidateJ.type === "add"
-          ? candidateJ.value
-          : leftArr[
-              candidateJ.sourceArrayRemovalBatchStartIdx +
-                candidateJ.sourceArrayRemovalBatchPosition
-            ];
-
-      if (!compareFunc(candidateIValue, candidateJValue)) {
-        continue;
-      }
-
-      const addOperationCandidate = (
-        candidateI.type === "add" ? candidateI : candidateJ
-      ) as AddOperationCandidate;
-
-      const removeOperationCandidate = (
-        candidateI.type === "remove" ? candidateI : candidateJ
-      ) as RemoveOperationCandidate;
-
-      // RFC 6902 move semantics: first remove from `from`, then add at `path`.
-      // When the add candidate (at position j) precedes the remove candidate
-      // (at position i) in the candidate list, the remove's shiftedIdx was
-      // inflated by the add. We must undo that shift so `from` references
-      // the element's position before the move.
-      const addIsBeforeRemove = candidateJ.type === "add";
-      const fromShiftedIdx = addIsBeforeRemove
-        ? removeOperationCandidate.shiftedIdx - 1
-        : removeOperationCandidate.shiftedIdx;
-
-      candidates[j] = {
-        type: "move",
-        fromShiftedIdx,
-        toShiftedIdx: addOperationCandidate.totalShiftedIdx,
-        value: addOperationCandidate.value,
-      };
-      candidates.splice(i, 1);
-
-      break;
-    }
+    const removeIndex =
+      removal.shiftedIdx - removal.sourceArrayRemovalBatchPosition;
+    const addIndex = addition.totalShiftedIdx;
+    const addFirst = first.type === "add";
+    candidates[i - 1] = {
+      type: "move",
+      fromShiftedIdx:
+        removeIndex - (addFirst && addIndex < removeIndex ? 1 : 0),
+      toShiftedIdx: addIndex - (addFirst && removeIndex < addIndex ? 1 : 0),
+      value: addition.value,
+    };
+    candidates.splice(i, 1);
   }
 }
