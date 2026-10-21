@@ -1,6 +1,7 @@
 import type { ComparableArray, CompareFunc, RFC6902 } from "../types/index";
 import { diffUnknownValues } from "./diff-unknown-values";
 import { diff } from "./util/fast-myers-diff";
+import { deepEqual } from "./util/deep-equal";
 import type {
   AddOperationCandidate,
   OperationCandidate,
@@ -15,6 +16,21 @@ export function diffArraysUsingLcs(
   operations: RFC6902.Operation[] = [],
   shouldDetectMoveOperations = false
 ): void {
+  // Myers approaches quadratic work when the arrays have no common values.
+  // For primitive values, Set membership can prove this in linear time.
+  // Custom comparators must retain their own equality semantics.
+  if (
+    compareFunc === deepEqual &&
+    isPrimitive(leftArr[0]) &&
+    isPrimitive(rightArr[0]) &&
+    leftArr[0] !== rightArr[0] &&
+    leftArr[leftArr.length - 1] !== rightArr[rightArr.length - 1] &&
+    haveNoCommonPrimitiveValues(leftArr, rightArr)
+  ) {
+    operations.push({ op: "replace", path, value: rightArr });
+    return;
+  }
+
   const operationCandidates: OperationCandidate[] = [];
 
   const fastMyersDiffIterator = diff(leftArr, rightArr, (l, r) =>
@@ -110,6 +126,29 @@ export function diffArraysUsingLcs(
     compareFunc,
     shouldDetectMoveOperations
   );
+}
+
+function isPrimitive(value: unknown): boolean {
+  return (
+    value === null || (typeof value !== "object" && typeof value !== "function")
+  );
+}
+
+function haveNoCommonPrimitiveValues(
+  left: unknown[],
+  right: unknown[]
+): boolean {
+  const smaller = left.length <= right.length ? left : right;
+  const larger = left.length <= right.length ? right : left;
+  const values = new Set<unknown>();
+  for (const value of smaller) {
+    if (!isPrimitive(value)) return false;
+    values.add(value);
+  }
+  for (const value of larger) {
+    if (!isPrimitive(value) || values.has(value)) return false;
+  }
+  return true;
 }
 
 function mapOperationCandidatesToOperations(

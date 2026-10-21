@@ -1,14 +1,20 @@
 {
-  "name": "benchmark",
-  "version": "1.0.0",
-  "description": "",
-  "main": "benchmark.ts",
+  "name": "fast-rfc6902-json-diff-benchmark",
+  "private": true,
+  "type": "module",
   "scripts": {
-    "benchmark": "bun benchmark.ts"
+    "benchmark": "npm run benchmark:node && npm run benchmark:bun",
+    "benchmark:node": "tsx benchmark.ts --update-readme",
+    "benchmark:bun": "bun benchmark.ts --update-readme",
+    "validate": "tsx benchmark.ts --validate-only"
   },
   "dependencies": {
-    "benchmark": "^2.1.4",
-    "jsondiffpatch": "^0.7.3",
-    "rfc6902": "^5.2.0"
+    "benchmark": "2.1.4",
+    "fast-json-patch": "3.1.1",
+    "generate-json-patch": "1.2.9",
+    "jsondiffpatch": "0.7.6",
+    "just-diff": "6.0.2",
+    "rfc6902": "5.3.0",
+    "tsx": "4.21.0"
   }
 }

@@ -7,7 +7,8 @@ export function diffObjects(
   rightObj: ComparableRecord,
   compareFunc: CompareFunc,
   path = "",
-  operations: RFC6902.Operation[] = []
+  operations: RFC6902.Operation[] = [],
+  detectMoveOperations = false
 ): void {
   let key;
 
@@ -25,7 +26,8 @@ export function diffObjects(
       compareFunc,
       `${path}/${escapePathSegment(leftKey)}`,
       leftKey in rightObj,
-      operations
+      operations,
+      detectMoveOperations
     );
   }
 

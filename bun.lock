@@ -3,7 +3,7 @@
   "configVersion": 0,
   "workspaces": {
     "": {
-      "name": "rfc6902-json-diff",
+      "name": "fast-rfc6902-json-diff",
       "devDependencies": {
         "@tsconfig/node16-strictest": "^1.0.3",
         "@types/lodash": "^4.14.184",

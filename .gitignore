@@ -8,3 +8,4 @@ dist/
 coverage/
 *.lcov
 package-lock.json
+benchmark/results-*.json

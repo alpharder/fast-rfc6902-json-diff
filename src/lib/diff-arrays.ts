@@ -26,7 +26,8 @@ export function diffArrays(
       compareFunc,
       `${path}/0`,
       true,
-      operations
+      operations,
+      detectMoveOperations
     );
   } else {
     diffArraysUsingLcs(

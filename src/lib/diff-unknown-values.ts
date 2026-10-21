@@ -48,7 +48,8 @@ export function diffUnknownValues(
         rightVal as Record<number, unknown>,
         compareFunc,
         path,
-        operations
+        operations,
+        detectMoveOperations
       );
       return;
     }

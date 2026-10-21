@@ -1,7 +1,35 @@
 {
-  "name": "rfc6902-json-diff",
+  "name": "fast-rfc6902-json-diff",
   "version": "1.0.0",
-  "description": "The fastest RFC 6902 JSON diff generator with move detection and LCS array diffing",
+  "description": "The fastest RFC 6902 JSON diff generator. Compact array diffs, optional move detection and zero runtime dependencies. Built for Node.js and Bun.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alpharder/fast-rfc6902-json-diff.git"
+  },
+  "homepage": "https://github.com/alpharder/fast-rfc6902-json-diff#readme",
+  "bugs": {
+    "url": "https://github.com/alpharder/fast-rfc6902-json-diff/issues"
+  },
+  "keywords": [
+    "json",
+    "json-diff",
+    "json-patch",
+    "rfc6902",
+    "rfc6901",
+    "json-pointer",
+    "diff",
+    "array-diff",
+    "myers",
+    "lcs",
+    "move-detection",
+    "typescript",
+    "javascript",
+    "zero-dependencies"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
   "type": "module",
   "sideEffects": false,
   "main": "./dist/index.cjs",
@@ -20,11 +48,16 @@
     }
   },
   "files": [
-    "dist"
+    "dist",
+    "THIRD_PARTY_NOTICES"
   ],
   "scripts": {
     "prebuild-checks": "npm-run-all -c tsc-lint lint",
-    "build": "tsup src/index.ts --dts --format esm,cjs --minify --treeshake --target es2020",
+    "build": "tsup src/index.ts --dts --format esm,cjs --minify --treeshake --target es2020 --clean && node scripts/finalize-build.mjs",
+    "check": "npm-run-all prebuild-checks test check:package",
+    "check:package": "npm run build && node scripts/check-package.mjs",
+    "prepack": "npm run build",
+    "prepublishOnly": "npm run check",
     "test": "ava",
     "tsc-lint": "tsc --noEmit",
     "lint": "eslint ./src"
