@@ -135,8 +135,8 @@ function isPrimitive(value: unknown): boolean {
 }
 
 function haveNoCommonPrimitiveValues(
-  left: unknown[],
-  right: unknown[]
+  left: ComparableArray,
+  right: ComparableArray
 ): boolean {
   const smaller = left.length <= right.length ? left : right;
   const larger = left.length <= right.length ? right : left;
@@ -206,7 +206,7 @@ function mapOperationCandidatesToOperations(
 function detectMoveOperations(
   candidates: OperationCandidate[],
   compareFunc: CompareFunc,
-  leftArr: Array<unknown>
+  leftArr: ComparableArray
 ) {
   for (let i = candidates.length - 1; i >= 0; i--) {
     const candidateI = candidates[i];

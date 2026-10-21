@@ -1,5 +1,6 @@
 import type {
   ComparableValue,
+  JsonCompatible,
   CompareFunc,
   CompareOptions,
   RFC6902,
@@ -55,6 +56,11 @@ function createCompareFunc(doCaching: boolean): CompareFunc {
   };
 }
 
+export function compare<Left, Right>(
+  left: Left & JsonCompatible<Left>,
+  right: Right & JsonCompatible<Right>,
+  options?: CompareOptions
+): RFC6902.Operation[];
 export function compare(
   left: ComparableValue,
   right: ComparableValue,

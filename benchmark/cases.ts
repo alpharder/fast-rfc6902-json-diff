@@ -1,9 +1,10 @@
 import { realWorldLargeDocumentCases } from "../src/tests/_diff-test-data";
+import type { JsonValue } from "../src/types";
 
 export type Case = {
   name: string;
-  left: object;
-  right: object;
+  left: JsonValue;
+  right: JsonValue;
   moves?: boolean;
   showDocumentSize?: boolean;
 };

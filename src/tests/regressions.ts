@@ -3,17 +3,53 @@ import { applyPatch } from "fast-json-patch";
 import { compare } from "../lib/compare";
 import { diffArraysUsingLcs } from "../lib/diff-arrays-using-lcs";
 import { deepEqual } from "../lib/util/deep-equal";
-import type { RFC6902 } from "../types/index";
+import type { JsonArray, JsonValue, RFC6902 } from "../types/index";
 
 const leftItems = [{ id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }];
 const rightItems = [{ id: 4 }, { id: 1 }, { id: 2 }, { id: 3 }];
 
+test("JSON primitives and container transitions round-trip at the root", (t) => {
+  const values: JsonValue[] = [null, false, true, 0, 42, "", "json", [], {}];
+  for (const left of values) {
+    for (const right of values) {
+      const patch = compare(left, right);
+      t.deepEqual(
+        applyPatch(structuredClone(left), patch, true).newDocument,
+        right
+      );
+      if (left === right) t.deepEqual(patch, []);
+    }
+  }
+});
+
+test("frozen JSON documents support nested moves without mutation", (t) => {
+  const first = Object.freeze({ id: 1 });
+  const second = Object.freeze({ id: 2 });
+  const third = Object.freeze({ id: 3 });
+  const fourth = Object.freeze({ id: 4 });
+  const left = Object.freeze({
+    items: Object.freeze([first, second, third, fourth]),
+  });
+  const right = Object.freeze({
+    items: Object.freeze([fourth, first, second, third]),
+  });
+  const patch = compare(left, right, {
+    detectMoveOperations: true,
+    doCaching: true,
+  });
+  t.deepEqual(patch, [{ op: "move", from: "/items/3", path: "/items/0" }]);
+  t.deepEqual(
+    applyPatch(structuredClone(left), patch, true).newDocument,
+    right
+  );
+});
+
 for (const [title, wrap, path] of [
-  ["object property", (items: unknown[]) => ({ items }), "/items"],
-  ["single-item array", (items: unknown[]) => [items], "/0"],
+  ["object property", (items: JsonArray) => ({ items }), "/items"],
+  ["single-item array", (items: JsonArray) => [items], "/0"],
   [
     "nested escaped property",
-    (items: unknown[]) => [{ "a/b": { "~items": items } }],
+    (items: JsonArray) => [{ "a/b": { "~items": items } }],
     "/0/a~1b/~0items",
   ],
 ] as const) {

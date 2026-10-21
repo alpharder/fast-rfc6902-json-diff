@@ -77,13 +77,19 @@ try {
     "-e",
     `const assert = require('node:assert/strict'); const {compare} = require('${packed.name}'); ${assertion}`,
   ]);
-  const consumer = `import {compare, type RFC6902} from '${packed.name}'; const patch: RFC6902.Operation[] = compare({x:1},{x:2}); void patch;`;
+  // Exercise the same positive and @ts-expect-error cases against the actual
+  // packed declarations under both the import and require export conditions.
+  const consumer = readFileSync(
+    path.join(root, "type-tests/compare.ts"),
+    "utf8"
+  );
   for (const extension of ["mts", "cts"])
     writeFileSync(path.join(temp, `consumer.${extension}`), consumer);
   run(process.execPath, [
     path.join(root, "node_modules/typescript/bin/tsc"),
     "--noEmit",
     "--strict",
+    "--exactOptionalPropertyTypes",
     "--target",
     "ES2020",
     "--module",

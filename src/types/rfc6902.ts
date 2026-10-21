@@ -1,19 +1,21 @@
+import type { JsonCompatible, JsonValue } from "./json";
+
 type BaseOperation = {
   path: string;
 };
 
-export type AddOperation<T = unknown> = BaseOperation & {
+export type AddOperation<T = JsonValue> = BaseOperation & {
   op: "add";
-  value: T;
+  value: T & JsonCompatible<T>;
 };
 
 export type RemoveOperation = BaseOperation & {
   op: "remove";
 };
 
-export type ReplaceOperation<T = unknown> = BaseOperation & {
+export type ReplaceOperation<T = JsonValue> = BaseOperation & {
   op: "replace";
-  value: T;
+  value: T & JsonCompatible<T>;
 };
 
 export type MoveOperation = BaseOperation & {
@@ -26,12 +28,12 @@ export type CopyOperation = BaseOperation & {
   from: string;
 };
 
-export type TestOperation<T = unknown> = BaseOperation & {
+export type TestOperation<T = JsonValue> = BaseOperation & {
   op: "test";
-  value: T;
+  value: T & JsonCompatible<T>;
 };
 
-export type Operation<T = unknown> =
+export type Operation<T = JsonValue> =
   | AddOperation<T>
   | RemoveOperation
   | ReplaceOperation<T>

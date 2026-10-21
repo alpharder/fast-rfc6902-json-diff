@@ -54,13 +54,14 @@
   "scripts": {
     "prebuild-checks": "npm-run-all -c tsc-lint lint",
     "build": "tsup src/index.ts --dts --format esm,cjs --minify --treeshake --target es2020 --clean && node scripts/finalize-build.mjs",
-    "check": "npm-run-all prebuild-checks test check:package",
+    "check": "npm-run-all prebuild-checks test:types test check:package",
     "check:package": "npm run build && node scripts/check-package.mjs",
     "prepack": "npm run build",
     "prepublishOnly": "npm run check",
     "test": "ava",
+    "test:types": "tsc -p tsconfig.types.json",
     "tsc-lint": "tsc --noEmit",
-    "lint": "eslint ./src"
+    "lint": "eslint ./src ./type-tests"
   },
   "ava": {
     "timeout": "20s",

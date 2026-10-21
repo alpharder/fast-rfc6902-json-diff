@@ -1,10 +1,16 @@
 import { diffObjects } from "./diff-objects";
 import { diffArrays } from "./diff-arrays";
-import type { RFC6902, CompareFunc } from "../types/index";
+import type {
+  RFC6902,
+  CompareFunc,
+  JsonValue,
+  JsonArray,
+  JsonObject,
+} from "../types/index";
 
 export function diffUnknownValues(
-  leftVal: unknown,
-  rightVal: unknown,
+  leftVal: JsonValue,
+  rightVal: JsonValue,
   compareFunc: CompareFunc,
   path = "",
   rightValExists = false,
@@ -32,8 +38,8 @@ export function diffUnknownValues(
   ) {
     if (ctor === Array) {
       diffArrays(
-        leftVal as Array<unknown>,
-        rightVal as Array<unknown>,
+        leftVal as JsonArray,
+        rightVal as JsonArray,
         compareFunc,
         path,
         operations,
@@ -44,8 +50,8 @@ export function diffUnknownValues(
 
     if (!ctor || typeof leftVal === "object") {
       diffObjects(
-        leftVal as Record<number, unknown>,
-        rightVal as Record<number, unknown>,
+        leftVal as JsonObject,
+        rightVal as JsonObject,
         compareFunc,
         path,
         operations,

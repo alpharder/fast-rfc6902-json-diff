@@ -1,3 +1,5 @@
+import type { JsonValue } from "./json";
+
 export type RemoveOperationCandidate = {
   type: "remove";
   sourceArrayRemovalBatchStartIdx: number;
@@ -7,7 +9,7 @@ export type RemoveOperationCandidate = {
 
 export type AddOperationCandidate = {
   type: "add";
-  value: unknown;
+  value: JsonValue;
   totalShiftedIdx: number;
 };
 
@@ -16,13 +18,13 @@ export type OperationCandidate =
   | AddOperationCandidate
   | {
       type: "replace";
-      value: unknown;
-      removedValue: unknown;
+      value: JsonValue;
+      removedValue: JsonValue;
       shiftedIdx: number;
     }
   | {
       type: "move";
-      value: unknown;
+      value: JsonValue;
       fromShiftedIdx: number;
       toShiftedIdx: number;
     };

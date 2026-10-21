@@ -1,0 +1,12 @@
+{
+  "extends": "./tsconfig.json",
+  "include": ["type-tests/**/*.ts"],
+  "compilerOptions": {
+    "rootDir": ".",
+    "noEmit": true,
+    "baseUrl": ".",
+    "paths": {
+      "fast-rfc6902-json-diff": ["./src/index.ts"]
+    }
+  }
+}

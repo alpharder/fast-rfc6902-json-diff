@@ -1,10 +1,10 @@
 import { diffArraysUsingLcs } from "./diff-arrays-using-lcs";
 import { diffUnknownValues } from "./diff-unknown-values";
-import type { RFC6902, CompareFunc } from "../types/index";
+import type { RFC6902, CompareFunc, JsonArray } from "../types/index";
 
 export function diffArrays(
-  leftArr: Array<unknown>,
-  rightArr: Array<unknown>,
+  leftArr: JsonArray,
+  rightArr: JsonArray,
   compareFunc: CompareFunc,
   path = "",
   operations: RFC6902.Operation[] = [],

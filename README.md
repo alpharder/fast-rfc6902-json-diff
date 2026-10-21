@@ -148,8 +148,8 @@ Returns JSON Patch operations that transform `left` into `right`, without mutati
 
 | Parameter | Type | Description |
 |---|---|---|
-| `left` | `object` or `array` | Source JSON document |
-| `right` | `object` or `array` | Target JSON document |
+| `left` | JSON value | Source JSON document |
+| `right` | JSON value | Target JSON document |
 | `options.detectMoveOperations` | `boolean` | Detect equal array elements that moved; default `false` |
 | `options.doCaching` | `boolean` | Cache successful deep-equality comparisons within this call; default `false` |
 
@@ -157,7 +157,9 @@ Generated operations: `add`, `remove`, `replace`, and `move` when enabled. Paths
 
 Array matching uses deep equality, rather than an `id` field or a custom identity callback. Arrays with no common values can be replaced as a whole. Patch minimality and operation ordering are not API guarantees.
 
-Use JSON objects and arrays containing strings, finite numbers, booleans, `null`, objects and arrays. Cycles and non-JSON values such as `undefined`, `BigInt`, `Date`, `Map` and `Set` are outside the supported contract. Operation values can reference `right`; clone the patch if it needs to remain independent of later changes to that document.
+Inputs can be JSON objects, arrays, strings, finite numbers, booleans or `null`. Cycles and non-JSON values such as `undefined`, `BigInt`, `Date`, `Map` and `Set` are outside the supported contract. Operation values can reference `right`; clone the patch if it needs to remain independent of later changes to that document.
+
+TypeScript checks nested fields and accepts ordinary interfaces and readonly arrays. The exported `JsonValue`, `JsonObject` and `JsonArray` types describe JSON data; operation values default to `JsonValue`. Types do not validate untrusted runtime data, cyclic references or non-finite numbers.
 
 ES2020 builds are provided for ESM and CommonJS, with TypeScript declarations. Use them in Node.js, Bun or browser bundles.
 
@@ -180,7 +182,7 @@ bun install --frozen-lockfile
 bun run benchmark
 ```
 
-`bun run check` runs type checking, lint, tests, a clean build and installation checks for the packed npm package. Benchmarks save exact versions, environment, measurement uncertainty, operation counts and patch sizes in `benchmark/results-{node,bun}.json`; these local files are ignored by Git. To run just one runtime, use `bun run benchmark:node` or `bun run benchmark:bun` inside `benchmark/`.
+`bun run check` runs type checking, lint, tests, a clean build and installation checks for the packed npm package. Type regression tests use `@ts-expect-error` against both the source and the packed ESM/CommonJS declarations. Use `bun run test:types` for source type checks or `bun run check:package` to check the packed declarations. Benchmarks save exact versions, environment, measurement uncertainty, operation counts and patch sizes in `benchmark/results-{node,bun}.json`; these local files are ignored by Git. To run just one runtime, use `bun run benchmark:node` or `bun run benchmark:bun` inside `benchmark/`.
 
 ## License
 
